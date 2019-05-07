@@ -55,7 +55,7 @@ class Player(pygame.sprite.Sprite):
         self.speedy = 0
         
         # Melhora a colisão estabelecendo um raio de um circulo
-        self.radius = 25
+        self.radius = 0
     
     # Metodo que atualiza a posição da navinha
     def update(self):
@@ -166,7 +166,7 @@ background = pygame.image.load(path.join(img_dir, 'kokiriii.png')).convert()
 background_rect = background.get_rect()
 
 # Carrega os sons do jogo
-pygame.mixer.music.load(path.join(snd_dir, 'tgfcoder-FrozenJam-SeamlessLoop.ogg'))
+pygame.mixer.music.load(path.join(snd_dir, 'kokiri.mp3'))
 pygame.mixer.music.set_volume(0.4)
 boom_sound = pygame.mixer.Sound(path.join(snd_dir, 'expl3.wav'))
 destroy_sound = pygame.mixer.Sound(path.join(snd_dir, 'expl6.wav'))
