@@ -22,6 +22,14 @@ RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 YELLOW = (255, 255, 0)
+UP= 0
+DOWN=1
+LEFT=2
+RIGHT=3
+
+direction=0
+
+
 
 # Classe Jogador que representa a nave
 class Player(pygame.sprite.Sprite):
@@ -98,8 +106,8 @@ class Mob(pygame.sprite.Sprite):
         # Sorteia um lugar inicial em y
         self.rect.y = random.randrange(-100, -40)
         # Sorteia uma velocidade inicial
-        self.speedx = random.randrange(-3, 3)
-        self.speedy = random.randrange(2, 9)
+        self.speedx = random.randrange(1, 3)
+        self.speedy = random.randrange(1, 7)
         
         # Melhora a colisão estabelecendo um raio de um circulo
         self.radius = int(self.rect.width * .85 / 2)
@@ -117,6 +125,7 @@ class Mob(pygame.sprite.Sprite):
             self.speedy = random.randrange(2, 9)
             
 # Classe Bullet que representa os tiros
+        
 class Bullet(pygame.sprite.Sprite):
     
     # Construtor da classe.
@@ -138,11 +147,13 @@ class Bullet(pygame.sprite.Sprite):
         # Coloca no lugar inicial definido em x, y do constutor
         self.rect.bottom = y
         self.rect.centerx = x
-        self.speedy = -10
-
+        self.speedy = 0
+        self.speedx = 0
+        
     # Metodo que atualiza a posição da navinha
     def update(self):
         self.rect.y += self.speedy
+        self.rect.x += self.speedx
         
         # Se o tiro passar do inicio da tela, morre.
         if self.rect.bottom < 0:
@@ -156,7 +167,7 @@ pygame.mixer.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
 # Nome do jogo
-pygame.display.set_caption("Navinha")
+pygame.display.set_caption("The adventures of Link")
 
 # Variável para o ajuste de velocidade
 clock = pygame.time.Clock()
@@ -213,12 +224,14 @@ try:
             if event.type == pygame.KEYDOWN:
                 # Dependendo da tecla, altera a velocidade.
                 if event.key == pygame.K_LEFT:
+                    direction = 2
                     player.speedx = -8
                     player_img = pygame.image.load(path.join(img_dir, "link_left.png")).convert()
                     player.image = player_img
                     player.image = pygame.transform.scale(player_img, (50, 38))
                     player.image.set_colorkey(BLACK)
                 if event.key == pygame.K_RIGHT:
+                    direction= 3
                     player.speedx = 8
                     player_img = pygame.image.load(path.join(img_dir, "link_right.png")).convert()
                     player.image = player_img
@@ -228,16 +241,28 @@ try:
                 # Se for um espaço atira!
                 if event.key == pygame.K_SPACE:
                     bullet = Bullet(player.rect.centerx, player.rect.top)
+                    if direction==0:
+                        bullet.speedy=-10
+                    if direction==1:
+                        bullet.speedy=10
+                    if direction==2:
+                        bullet.speedx= -10
+                    if direction==3:
+                        bullet.speedx= 10
                     all_sprites.add(bullet)
                     bullets.add(bullet)
                     pew_sound.play()
+                    
+
                 if event.key == pygame.K_UP:
+                    direction= 0
                     player.speedy = -8
                     player_img = pygame.image.load(path.join(img_dir, "link_up.png")).convert()
                     player.image = player_img
                     player.image = pygame.transform.scale(player_img, (50, 38))
                     player.image.set_colorkey(BLACK)
                 if event.key == pygame.K_DOWN:
+                    direction=1
                     player.speedy = 8
                     player_img = pygame.image.load(path.join(img_dir, "link_down.png")).convert()
                     player.image = player_img
@@ -275,7 +300,6 @@ try:
             # Toca o som da colisão
             boom_sound.play()
             time.sleep(1) # Precisa esperar senão fecha
-            
             running = False
     
         # A cada loop, redesenha o fundo e os sprites
