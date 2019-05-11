@@ -135,8 +135,18 @@ class Bullet(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         
         # Carregando a imagem de fundo.
-        bullet_img = pygame.image.load(path.join(img_dir, "arrow.png")).convert()
-        self.image = pygame.transform.scale(bullet_img, (30, 54))
+        if direction == 0:
+            bullet_img = pygame.image.load(path.join(img_dir, "arrow.png")).convert()
+            self.image = pygame.transform.scale(bullet_img, (30, 54))
+        elif direction == 1:
+            bullet_img = pygame.image.load(path.join(img_dir, "arrow.down.png")).convert()
+            self.image = pygame.transform.scale(bullet_img, (30, 54))
+        elif direction == 2:
+            bullet_img = pygame.image.load(path.join(img_dir, "arrow.left.png")).convert()
+            self.image = pygame.transform.scale(bullet_img, (30, 54))
+        elif direction == 3:
+            bullet_img = pygame.image.load(path.join(img_dir, "arrow.right.png")).convert()
+            self.image = pygame.transform.scale(bullet_img, (30, 54))
         
         # Deixando transparente.
         self.image.set_colorkey(BLACK)
@@ -181,7 +191,7 @@ pygame.mixer.music.load(path.join(snd_dir, 'kokiri.mp3'))
 pygame.mixer.music.set_volume(0.4)
 boom_sound = pygame.mixer.Sound(path.join(snd_dir, 'expl3.wav'))
 destroy_sound = pygame.mixer.Sound(path.join(snd_dir, 'expl6.wav'))
-pew_sound = pygame.mixer.Sound(path.join(snd_dir, 'pew.wav'))
+pew_sound = pygame.mixer.Sound(path.join(snd_dir, 'arrowhits.wav'))
 
 # Cria uma nave. O construtor será chamado automaticamente.
 player = Player()
