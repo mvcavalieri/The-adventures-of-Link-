@@ -56,7 +56,7 @@ class Player(pygame.sprite.Sprite):
         
         # Centraliza embaixo da tela.
         self.rect.centerx = WIDTH / 2
-        self.rect.bottom = HEIGHT - 10
+        self.rect.bottom = HEIGHT / 2
         
         # Velocidade da nave
         self.speedx = 0
@@ -102,12 +102,35 @@ class Mob(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         
         # Sorteia um lugar inicial em x
-        self.rect.x = random.randrange(WIDTH - self.rect.width)
+        #self.rect.x = random.randrange(WIDTH - self.rect.width)
         # Sorteia um lugar inicial em y
-        self.rect.y = random.randrange(-100, -40)
+        #self.rect.y = random.randrange(-100, -40)
+        rand= random.randint(0,3)
+        
+        if rand == 0:
+            self.rect.x = random.randrange(0, 480)  #altura   
+            self.rect.y = random.randrange(-100, -40)         
+            self.speedx = random.randrange(-2, 2)             
+            self.speedy = random.randrange(2, 9)
+        elif rand == 1:
+            self.rect.x = random.randrange(-100, -40)
+            self.rect.y = random.randrange(0, 600)  #lado
+            self.speedx = random.randrange(2, 9)
+            self.speedy = random.randrange(-3, 3)
+        elif rand == 2:
+            self.rect.x = random.randrange(0, 480)  #altura
+            self.rect.y = random.randrange(650, 700)
+            self.speedx = random.randrange(-3, 3)
+            self.speedy = random.randrange(-9, -2)
+        elif rand == 3:
+            self.rect.x = random.randrange(490, 500)
+            self.rect.y = random.randrange(0, 600)  #lado
+            self.speedx = random.randrange(-9, -2)
+            self.speedy = random.randrange(-3, 3)
+        
         # Sorteia uma velocidade inicial
-        self.speedx = random.randrange(1, 3)
-        self.speedy = random.randrange(1, 7)
+        #self.speedx = random.randrange(1, 3)
+        #self.speedy = random.randrange(1, 7)
         
         # Melhora a colisão estabelecendo um raio de um circulo
         self.radius = int(self.rect.width * .85 / 2)
@@ -118,12 +141,33 @@ class Mob(pygame.sprite.Sprite):
         self.rect.y += self.speedy
         
         # Se o meteoro passar do final da tela, volta para cima
-        if self.rect.top > HEIGHT + 10 or self.rect.left < -25 or self.rect.right > WIDTH + 20:
-            self.rect.x = random.randrange(WIDTH - self.rect.width)
-            self.rect.y = random.randrange(-100, -40)
-            self.speedx = random.randrange(-3, 3)
+        #if self.rect.top > HEIGHT + 10 or self.rect.left < -25 or self.rect.right > WIDTH + 20:
+        
+        """
+        
+        if rand == 0:
+            self.rect.x = random.randrange(0, 480)  #altura   
+            self.rect.y = random.randrange(-100, -40)         
+            self.speedx = random.randrange(-2, 2)             
             self.speedy = random.randrange(2, 9)
+        elif rand == 1:
+            self.rect.x = random.randrange(-100, -40)
+            self.rect.y = random.randrange(0, 600)  #lado
+            self.speedx = random.randrange(2, 9)
+            self.speedy = random.randrange(-3, 3)
+        elif rand == 2:
+            self.rect.x = random.randrange(0, 480)  #altura
+            self.rect.y = random.randrange(650, 700)
+            self.speedx = random.randrange(-3, 3)
+            self.speedy = random.randrange(-9, -2)
+        elif rand == 3:
+            self.rect.x = random.randrange(490, 500)
+            self.rect.y = random.randrange(0, 600)  #lado
+            self.speedx = random.randrange(-9, -2)
+            self.speedy = random.randrange(-3, 3)
             
+        """
+
 # Classe Bullet que representa os tiros
         
 class Bullet(pygame.sprite.Sprite):
@@ -207,7 +251,7 @@ mobs = pygame.sprite.Group()
 bullets = pygame.sprite.Group()
 
 # Cria 8 meteoros e adiciona no grupo meteoros
-for i in range(8):
+for i in range(2):
     m = Mob()
     all_sprites.add(m)
     mobs.add(m)
@@ -300,9 +344,7 @@ try:
         for hit in hits: # Pode haver mais de um
             # O meteoro e destruido e precisa ser recriado
             destroy_sound.play()
-            m = Mob() 
-            all_sprites.add(m)
-            mobs.add(m)
+            
         
         # Verifica se houve colisão entre nave e meteoro
         hits = pygame.sprite.spritecollide(player, mobs, False, pygame.sprite.collide_circle)
@@ -319,6 +361,17 @@ try:
         
         # Depois de desenhar tudo, inverte o display.
         pygame.display.flip()
+        
+        tempo = 0
+        
+        milli = clock.tick()
+        seconds= milli*1000
+        tempo += seconds
+        
+        if tempo % 17 == 0:
+            m = Mob() 
+            all_sprites.add(m)
+            mobs.add(m)
         
 finally:
     
