@@ -189,8 +189,8 @@ background_rect = background.get_rect()
 # Carrega os sons do jogo
 pygame.mixer.music.load(path.join(snd_dir, 'kokiri.mp3'))
 pygame.mixer.music.set_volume(0.4)
-boom_sound = pygame.mixer.Sound(path.join(snd_dir, 'expl3.wav'))
-destroy_sound = pygame.mixer.Sound(path.join(snd_dir, 'expl6.wav'))
+boom_sound = pygame.mixer.Sound(path.join(snd_dir, 'linkdie.wav'))
+destroy_sound = pygame.mixer.Sound(path.join(snd_dir, 'hit.wav'))
 pew_sound = pygame.mixer.Sound(path.join(snd_dir, 'arrowhits.wav'))
 
 # Cria uma nave. O construtor será chamado automaticamente.
