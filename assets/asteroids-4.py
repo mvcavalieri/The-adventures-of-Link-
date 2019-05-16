@@ -6,6 +6,9 @@ import random
 import time
 from os import path
 
+
+
+
 # Estabelece a pasta que contem as figuras e sons.
 img_dir = path.join(path.dirname(__file__), 'img')
 snd_dir = path.join(path.dirname(__file__), 'snd')
@@ -217,8 +220,15 @@ class Bullet(pygame.sprite.Sprite):
 pygame.init()
 pygame.mixer.init()
 
+fonte = pygame.font.SysFont('comicsans', 40, True)
+
+
+
 # Tamanho da tela.
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
+
+pontos = 0
+
 
 # Nome do jogo
 pygame.display.set_caption("The adventures of Link")
@@ -344,6 +354,7 @@ try:
         for hit in hits: # Pode haver mais de um
             # O meteoro e destruido e precisa ser recriado
             destroy_sound.play()
+            pontos += 100
             
         
         # Verifica se houve colisão entre nave e meteoro
@@ -358,6 +369,10 @@ try:
         screen.fill(BLACK)
         screen.blit(background, background_rect)
         all_sprites.draw(screen)
+        
+        rend_fonte= fonte.render('Pontuação: '+ str(pontos), 1, BLACK)
+        retang= rend_fonte.get_rect()
+        screen.blit(rend_fonte, retang)
         
         # Depois de desenhar tudo, inverte o display.
         pygame.display.flip()
