@@ -235,7 +235,7 @@ def cenario2(screen,direction_t):
     clock = pygame.time.Clock()
     
     # Carrega o fundo do jogo
-    background = pygame.image.load(path.join(img_dir, 'cenarioeldin.png')).convert()
+    background = pygame.image.load(path.join(img_dir, 'eldinvolc.png')).convert()
     background_rect = background.get_rect()
     
     # Carrega os sons do jogo

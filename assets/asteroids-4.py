@@ -5,8 +5,8 @@ import pygame
 import random
 import time
 from os import path
-from config import INIT, QUIT
-
+from config import INIT, QUIT, LEVEL2
+from cenario2 import cenario2
 
 # Estabelece a pasta que contem as figuras e sons.
 img_dir = path.join(path.dirname(__file__), 'img')
@@ -215,6 +215,9 @@ class Bullet(pygame.sprite.Sprite):
         # Se o tiro passar do inicio da tela, morre.
         if self.rect.bottom < 0:
             self.kill()
+            
+            
+pontos = 0            
      
 def cenario1(screen,direction_t):
     direction = direction_t
@@ -360,6 +363,11 @@ def cenario1(screen,direction_t):
             # Toca o som da colisão
             boom_sound.play()
             time.sleep(1) # Precisa esperar senão fecha
+            state = QUIT
+            running = False
+            
+        if pontos >= 100:
+            state = LEVEL2
             running = False
     
         # A cada loop, redesenha o fundo e os sprites
@@ -386,7 +394,8 @@ def cenario1(screen,direction_t):
             mobs.add(m)
              
                
-    return QUIT
+    return state
+
 pygame.init()
 pygame.mixer.init()    
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -396,6 +405,8 @@ try:
     while state != QUIT:
         if state == INIT:
             state = cenario1(screen, DIRECTION)
+        if state == LEVEL2:
+            state = cenario2(screen,DIRECTION)
         else:
             state = QUIT
 finally:
