@@ -5,6 +5,8 @@ import pygame
 import random
 import time
 from os import path
+from config import INIT, QUIT
+
 
 # Estabelece a pasta que contem as figuras e sons.
 img_dir = path.join(path.dirname(__file__), 'img')
@@ -27,7 +29,7 @@ DOWN=1
 LEFT=2
 RIGHT=3
 
-direction=0
+DIRECTION=0
 
 
 
@@ -56,7 +58,7 @@ class Player(pygame.sprite.Sprite):
         
         # Centraliza embaixo da tela.
         self.rect.centerx = WIDTH / 2
-        self.rect.bottom = HEIGHT - 10
+        self.rect.bottom = HEIGHT / 2
         
         # Velocidade da nave
         self.speedx = 0
@@ -102,12 +104,35 @@ class Mob(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         
         # Sorteia um lugar inicial em x
-        self.rect.x = random.randrange(WIDTH - self.rect.width)
+        #self.rect.x = random.randrange(WIDTH - self.rect.width)
         # Sorteia um lugar inicial em y
-        self.rect.y = random.randrange(-100, -40)
+        #self.rect.y = random.randrange(-100, -40)
+        rand= random.randint(0,3)
+        
+        if rand == 0:
+            self.rect.x = random.randrange(0, 480)  #altura   
+            self.rect.y = random.randrange(-100, -40)         
+            self.speedx = random.randrange(-2, 2)             
+            self.speedy = random.randrange(2, 9)
+        elif rand == 1:
+            self.rect.x = random.randrange(-100, -40)
+            self.rect.y = random.randrange(0, 600)  #lado
+            self.speedx = random.randrange(2, 9)
+            self.speedy = random.randrange(-3, 3)
+        elif rand == 2:
+            self.rect.x = random.randrange(0, 480)  #altura
+            self.rect.y = random.randrange(650, 700)
+            self.speedx = random.randrange(-3, 3)
+            self.speedy = random.randrange(-9, -2)
+        elif rand == 3:
+            self.rect.x = random.randrange(490, 500)
+            self.rect.y = random.randrange(0, 600)  #lado
+            self.speedx = random.randrange(-9, -2)
+            self.speedy = random.randrange(-3, 3)
+        
         # Sorteia uma velocidade inicial
-        self.speedx = random.randrange(1, 3)
-        self.speedy = random.randrange(1, 7)
+        #self.speedx = random.randrange(1, 3)
+        #self.speedy = random.randrange(1, 7)
         
         # Melhora a colisão estabelecendo um raio de um circulo
         self.radius = int(self.rect.width * .85 / 2)
@@ -118,33 +143,54 @@ class Mob(pygame.sprite.Sprite):
         self.rect.y += self.speedy
         
         # Se o meteoro passar do final da tela, volta para cima
-        if self.rect.top > HEIGHT + 10 or self.rect.left < -25 or self.rect.right > WIDTH + 20:
-            self.rect.x = random.randrange(WIDTH - self.rect.width)
-            self.rect.y = random.randrange(-100, -40)
-            self.speedx = random.randrange(-3, 3)
+        #if self.rect.top > HEIGHT + 10 or self.rect.left < -25 or self.rect.right > WIDTH + 20:
+        
+        """
+        
+        if rand == 0:
+            self.rect.x = random.randrange(0, 480)  #altura   
+            self.rect.y = random.randrange(-100, -40)         
+            self.speedx = random.randrange(-2, 2)             
             self.speedy = random.randrange(2, 9)
+        elif rand == 1:
+            self.rect.x = random.randrange(-100, -40)
+            self.rect.y = random.randrange(0, 600)  #lado
+            self.speedx = random.randrange(2, 9)
+            self.speedy = random.randrange(-3, 3)
+        elif rand == 2:
+            self.rect.x = random.randrange(0, 480)  #altura
+            self.rect.y = random.randrange(650, 700)
+            self.speedx = random.randrange(-3, 3)
+            self.speedy = random.randrange(-9, -2)
+        elif rand == 3:
+            self.rect.x = random.randrange(490, 500)
+            self.rect.y = random.randrange(0, 600)  #lado
+            self.speedx = random.randrange(-9, -2)
+            self.speedy = random.randrange(-3, 3)
             
+        """
+
 # Classe Bullet que representa os tiros
         
 class Bullet(pygame.sprite.Sprite):
     
     # Construtor da classe.
-    def __init__(self, x, y):
+    def __init__(self, x, y,direction):
         
         # Construtor da classe pai (Sprite).
         pygame.sprite.Sprite.__init__(self)
-        
+        self.direction = direction
         # Carregando a imagem de fundo.
-        if direction == 0:
+        if self.direction == 0:
             bullet_img = pygame.image.load(path.join(img_dir, "arrow.png")).convert()
             self.image = pygame.transform.scale(bullet_img, (30, 54))
-        elif direction == 1:
+        elif self.direction == 1:
             bullet_img = pygame.image.load(path.join(img_dir, "arrow.down.png")).convert()
             self.image = pygame.transform.scale(bullet_img, (30, 54))
-        elif direction == 2:
+        elif self.direction == 2:
             bullet_img = pygame.image.load(path.join(img_dir, "arrow.left.png")).convert()
             self.image = pygame.transform.scale(bullet_img, (30, 54))
-        elif direction == 3:
+        elif self.direction == 3:
             bullet_img = pygame.image.load(path.join(img_dir, "arrow.right.png")).convert()
             self.image = pygame.transform.scale(bullet_img, (30, 54))
         
@@ -160,6 +206,7 @@ class Bullet(pygame.sprite.Sprite):
         self.speedy = 0
         self.speedx = 0
         
+        
     # Metodo que atualiza a posição da navinha
     def update(self):
         self.rect.y += self.speedy
@@ -168,52 +215,56 @@ class Bullet(pygame.sprite.Sprite):
         # Se o tiro passar do inicio da tela, morre.
         if self.rect.bottom < 0:
             self.kill()
-
+     
+def cenario1(screen,direction_t):
+    direction = direction_t
+    
 # Inicialização do Pygame.
-pygame.init()
-pygame.mixer.init()
-
-# Tamanho da tela.
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
-
-# Nome do jogo
-pygame.display.set_caption("The adventures of Link")
-
-# Variável para o ajuste de velocidade
-clock = pygame.time.Clock()
-
-# Carrega o fundo do jogo
-background = pygame.image.load(path.join(img_dir, 'kokiriii.png')).convert()
-background_rect = background.get_rect()
-
-# Carrega os sons do jogo
-pygame.mixer.music.load(path.join(snd_dir, 'kokiri.mp3'))
-pygame.mixer.music.set_volume(0.4)
-boom_sound = pygame.mixer.Sound(path.join(snd_dir, 'linkdie.wav'))
-destroy_sound = pygame.mixer.Sound(path.join(snd_dir, 'hit.wav'))
-pew_sound = pygame.mixer.Sound(path.join(snd_dir, 'arrowhits.wav'))
-
-# Cria uma nave. O construtor será chamado automaticamente.
-player = Player()
-
-# Cria um grupo de todos os sprites e adiciona a nave.
-all_sprites = pygame.sprite.Group()
-all_sprites.add(player)
-
-# Cria um grupo só dos meteoros
-mobs = pygame.sprite.Group()
-
-# Cria um grupo para tiros
-bullets = pygame.sprite.Group()
-
-# Cria 8 meteoros e adiciona no grupo meteoros
-for i in range(8):
-    m = Mob()
-    all_sprites.add(m)
-    mobs.add(m)
-
-# Comando para evitar travamentos.
-try:
+    fonte = pygame.font.SysFont('comicsans', 40, True)
+    
+    # Tamanho da tela.
+    
+    
+    pontos = 0
+    
+    
+    # Nome do jogo
+    
+    
+    # Variável para o ajuste de velocidade
+    clock = pygame.time.Clock()
+    
+    # Carrega o fundo do jogo
+    background = pygame.image.load(path.join(img_dir, 'kokiriii.png')).convert()
+    background_rect = background.get_rect()
+    
+    # Carrega os sons do jogo
+    pygame.mixer.music.load(path.join(snd_dir, 'kokiri.mp3')) 
+    pygame.mixer.music.set_volume(0.4)
+    boom_sound = pygame.mixer.Sound(path.join(snd_dir, 'linkdie.wav'))
+    destroy_sound = pygame.mixer.Sound(path.join(snd_dir, 'hit.wav'))
+    pew_sound = pygame.mixer.Sound(path.join(snd_dir, 'arrowhits.wav'))
+    
+    # Cria uma nave. O construtor será chamado automaticamente.
+    player = Player()
+    
+    # Cria um grupo de todos os sprites e adiciona a nave.
+    all_sprites = pygame.sprite.Group()
+    all_sprites.add(player)
+    
+    # Cria um grupo só dos meteoros
+    mobs = pygame.sprite.Group()
+    
+    # Cria um grupo para tiros
+    bullets = pygame.sprite.Group()
+    
+    # Cria 8 meteoros e adiciona no grupo meteoros
+    for i in range(2):
+        m = Mob()
+        all_sprites.add(m)
+        mobs.add(m)
+    
+    # Comando para evitar travamentos.
     
     # Loop principal.
     pygame.mixer.music.play(loops=-1)
@@ -250,7 +301,7 @@ try:
 
                 # Se for um espaço atira!
                 if event.key == pygame.K_SPACE:
-                    bullet = Bullet(player.rect.centerx, player.rect.top)
+                    bullet = Bullet(player.rect.centerx, player.rect.top, direction)
                     if direction==0:
                         bullet.speedy=-10
                     if direction==1:
@@ -300,9 +351,8 @@ try:
         for hit in hits: # Pode haver mais de um
             # O meteoro e destruido e precisa ser recriado
             destroy_sound.play()
-            m = Mob() 
-            all_sprites.add(m)
-            mobs.add(m)
+            pontos += 100
+            
         
         # Verifica se houve colisão entre nave e meteoro
         hits = pygame.sprite.spritecollide(player, mobs, False, pygame.sprite.collide_circle)
@@ -317,9 +367,36 @@ try:
         screen.blit(background, background_rect)
         all_sprites.draw(screen)
         
+        rend_fonte= fonte.render('Pontuação: '+ str(pontos), 1, BLACK)
+        retang= rend_fonte.get_rect()
+        screen.blit(rend_fonte, retang)
+        
         # Depois de desenhar tudo, inverte o display.
         pygame.display.flip()
         
+        tempo = 0
+        
+        milli = clock.tick()
+        seconds= milli*1000
+        tempo += seconds
+        
+        if tempo % 17 == 0:
+            m = Mob() 
+            all_sprites.add(m)
+            mobs.add(m)
+             
+               
+    return QUIT
+pygame.init()
+pygame.mixer.init()    
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("The adventures of Link")   
+try:
+    state = INIT
+    while state != QUIT:
+        if state == INIT:
+            state = cenario1(screen, DIRECTION)
+        else:
+            state = QUIT
 finally:
-    
     pygame.quit()
