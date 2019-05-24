@@ -1,12 +1,13 @@
-# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*
 
 # Importando as bibliotecas necessárias.
 import pygame
 import random
 import time
 from os import path
-from config import INIT, QUIT, LEVEL2
+from config import INIT, QUIT, LEVEL2, LEVEL3
 from cenario2 import cenario2
+from cenario3 import cenario3
 
 # Estabelece a pasta que contem as figuras e sons.
 img_dir = path.join(path.dirname(__file__), 'img')
@@ -366,16 +367,20 @@ def cenario1(screen,direction_t):
             state = QUIT
             running = False
             
-        if pontos >= 100:
+        if pontos >= 1000:
             state = LEVEL2
             running = False
+            
+        elif pontos >= 3000:
+            state= LEVEL3
+            running=False
     
         # A cada loop, redesenha o fundo e os sprites
         screen.fill(BLACK)
         screen.blit(background, background_rect)
         all_sprites.draw(screen)
         
-        rend_fonte= fonte.render('Pontuação: '+ str(pontos), 1, BLACK)
+        rend_fonte= fonte.render('Pontuação: '+ str(pontos), 1, WHITE)
         retang= rend_fonte.get_rect()
         screen.blit(rend_fonte, retang)
         
@@ -392,8 +397,7 @@ def cenario1(screen,direction_t):
             m = Mob() 
             all_sprites.add(m)
             mobs.add(m)
-             
-               
+                           
     return state
 
 pygame.init()
@@ -407,6 +411,8 @@ try:
             state = cenario1(screen, DIRECTION)
         if state == LEVEL2:
             state = cenario2(screen,DIRECTION)
+        if state == LEVEL3:
+            state = cenario3(screen,DIRECTION)
         else:
             state = QUIT
 finally:

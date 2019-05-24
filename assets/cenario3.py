@@ -5,7 +5,7 @@ import pygame
 import random
 import time
 from os import path
-from config import INIT, QUIT, LEVEL3
+from config import INIT, QUIT
 
 
 # Estabelece a pasta que contem as figuras e sons.
@@ -92,13 +92,13 @@ class Mob(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         
         # Carregando a imagem de fundo.
-        mob_img = pygame.image.load(path.join(img_dir, "eldinmonster.png")).convert()
+        mob_img = pygame.image.load(path.join(img_dir, "zoramonster.png")).convert()
         
         # Diminuindo o tamanho da imagem.
         self.image = pygame.transform.scale(mob_img, (50, 38))
         
         # Deixando transparente.
-        self.image.set_colorkey(BLACK)
+        self.image.set_colorkey(WHITE)
         
         # Detalhes sobre o posicionamento.
         self.rect = self.image.get_rect()
@@ -216,7 +216,7 @@ class Bullet(pygame.sprite.Sprite):
         if self.rect.bottom < 0:
             self.kill()
      
-def cenario2(screen,direction_t):
+def cenario3(screen,direction_t):
     direction = direction_t
     
 # Inicialização do Pygame.
@@ -225,7 +225,7 @@ def cenario2(screen,direction_t):
     # Tamanho da tela.
     
     
-    pontos = 1000
+    pontos = 3000
     
     
     # Nome do jogo
@@ -235,11 +235,12 @@ def cenario2(screen,direction_t):
     clock = pygame.time.Clock()
     
     # Carrega o fundo do jogo
-    background = pygame.image.load(path.join(img_dir, 'eldinvolc.png')).convert()
+    background = pygame.image.load(path.join(img_dir, 'zora.png')).convert()
+    background= pygame.transform.scale(background, (480, 600))
     background_rect = background.get_rect()
     
     # Carrega os sons do jogo
-    pygame.mixer.music.load(path.join(snd_dir, 'eldinsong.mp3')) 
+    pygame.mixer.music.load(path.join(snd_dir, 'zorasong.mp3')) 
     pygame.mixer.music.set_volume(0.4)
     boom_sound = pygame.mixer.Sound(path.join(snd_dir, 'linkdie.wav'))
     destroy_sound = pygame.mixer.Sound(path.join(snd_dir, 'hit.wav'))
@@ -259,7 +260,7 @@ def cenario2(screen,direction_t):
     bullets = pygame.sprite.Group()
     
     # Cria 8 meteoros e adiciona no grupo meteoros
-    for i in range(5):
+    for i in range(8):
         m = Mob()
         all_sprites.add(m)
         mobs.add(m)
@@ -361,11 +362,6 @@ def cenario2(screen,direction_t):
             boom_sound.play()
             time.sleep(1) # Precisa esperar senão fecha
             running = False
-            
-        elif pontos >= 3000:
-            return LEVEL3
-            running=False
-
     
         # A cada loop, redesenha o fundo e os sprites
         screen.fill(BLACK)
