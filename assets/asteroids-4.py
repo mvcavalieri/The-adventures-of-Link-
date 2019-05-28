@@ -12,6 +12,7 @@ from cenario3 import cenario3
 # Estabelece a pasta que contem as figuras e sons.
 img_dir = path.join(path.dirname(__file__), 'img')
 snd_dir = path.join(path.dirname(__file__), 'snd')
+fnt_dir = path.join(path.dirname(__file__), 'font')
 
 # Dados gerais do jogo.
 WIDTH = 480 # Largura da tela
@@ -67,12 +68,14 @@ class Player(pygame.sprite.Sprite):
         
         # Melhora a colisão estabelecendo um raio de um circulo
         self.radius = 0
-    
+        self.lives= 3
+        self.hit= 0 
+        self.hidden= False
     # Metodo que atualiza a posição da navinha
     def update(self):
         self.rect.x += self.speedx
         self.rect.y += self.speedy
-        
+
         # Mantem dentro da tela
         if self.rect.right > WIDTH:
             self.rect.right = WIDTH
@@ -82,6 +85,7 @@ class Player(pygame.sprite.Sprite):
             self.rect.bottom = HEIGHT
         if self.rect.top < 0:
             self.rect.top = 0
+
                     
 # Classe Mob que representa os meteoros
 class Mob(pygame.sprite.Sprite):
@@ -273,6 +277,7 @@ def cenario1(screen,direction_t):
     # Loop principal.
     pygame.mixer.music.play(loops=-1)
     running = True
+    score_font= pygame.font.Font(path.join(fnt_dir, "PressStart2P.ttf"), 28)
     while running:
         
         # Ajusta a velocidade do jogo.
@@ -361,11 +366,17 @@ def cenario1(screen,direction_t):
         # Verifica se houve colisão entre nave e meteoro
         hits = pygame.sprite.spritecollide(player, mobs, False, pygame.sprite.collide_circle)
         if hits:
-            # Toca o som da colisão
-            boom_sound.play()
-            time.sleep(1) # Precisa esperar senão fecha
-            state = QUIT
-            running = False
+            timer = pygame.time.get_ticks()
+            if timer- player.hit>2000:
+                player.hit= pygame.time.get_ticks()
+                # Toca o som da colisão
+                boom_sound.play()
+                time.sleep(1) # Precisa esperar senão fecha
+                player.lives-=1
+                
+                if player.lives<=0:
+                    state = QUIT
+                    running = False
             
         if pontos >= 1000:
             state = LEVEL2
@@ -384,6 +395,10 @@ def cenario1(screen,direction_t):
         retang= rend_fonte.get_rect()
         screen.blit(rend_fonte, retang)
         
+        text_surface = score_font.render(chr(9829) * player.lives, True, RED)
+        text_rect = text_surface.get_rect()
+        text_rect.bottomleft = (10, HEIGHT - 10)
+        screen.blit(text_surface, text_rect)
         # Depois de desenhar tudo, inverte o display.
         pygame.display.flip()
         
@@ -397,6 +412,7 @@ def cenario1(screen,direction_t):
             m = Mob() 
             all_sprites.add(m)
             mobs.add(m)
+            
                            
     return state
 
