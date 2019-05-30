@@ -5,9 +5,10 @@ import pygame
 import random
 import time
 from os import path
-from config import INIT, QUIT, LEVEL2, LEVEL3
+from config import INIT, QUIT, LEVEL2, LEVEL3, CHEFAO
 from cenario2 import cenario2
 from cenario3 import cenario3
+from chefao import chefao
 
 # Estabelece a pasta que contem as figuras e sons.
 img_dir = path.join(path.dirname(__file__), 'img')
@@ -385,6 +386,10 @@ def cenario1(screen,direction_t):
         elif pontos >= 3000:
             state= LEVEL3
             running=False
+            
+        elif pontos>=4000:
+            state= CHEFAO
+            running=False
     
         # A cada loop, redesenha o fundo e os sprites
         screen.fill(BLACK)
@@ -424,11 +429,13 @@ try:
     state = INIT
     while state != QUIT:
         if state == INIT:
-            state = cenario1(screen, DIRECTION)
+            state = cenario1(screen, DIRECTION) 
         if state == LEVEL2:
             state = cenario2(screen,DIRECTION)
         if state == LEVEL3:
             state = cenario3(screen,DIRECTION)
+        if state == CHEFAO:
+            state= chefao(screen,DIRECTION)
         else:
             state = QUIT
 finally:

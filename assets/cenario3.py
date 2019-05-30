@@ -5,12 +5,13 @@ import pygame
 import random
 import time
 from os import path
-from config import INIT, QUIT
+from config import INIT, QUIT, CHEFAO
 
 
 # Estabelece a pasta que contem as figuras e sons.
 img_dir = path.join(path.dirname(__file__), 'img')
 snd_dir = path.join(path.dirname(__file__), 'snd')
+fnt_dir = path.join(path.dirname(__file__), 'font')
 
 # Dados gerais do jogo.
 WIDTH = 480 # Largura da tela
@@ -66,6 +67,9 @@ class Player(pygame.sprite.Sprite):
         
         # Melhora a colisão estabelecendo um raio de um circulo
         self.radius = 0
+        self.lives= 3
+        self.hit= 0 
+        self.hidden= False
     
     # Metodo que atualiza a posição da navinha
     def update(self):
@@ -270,6 +274,7 @@ def cenario3(screen,direction_t):
     # Loop principal.
     pygame.mixer.music.play(loops=-1)
     running = True
+    score_font= pygame.font.Font(path.join(fnt_dir, "PressStart2P.ttf"), 28)
     while running:
         
         # Ajusta a velocidade do jogo.
@@ -362,6 +367,10 @@ def cenario3(screen,direction_t):
             boom_sound.play()
             time.sleep(1) # Precisa esperar senão fecha
             running = False
+            
+        elif pontos >= 4000:
+            return CHEFAO
+            running=False
     
         # A cada loop, redesenha o fundo e os sprites
         screen.fill(BLACK)
@@ -371,6 +380,10 @@ def cenario3(screen,direction_t):
         rend_fonte= fonte.render('Pontuação: '+ str(pontos), 1, BLACK)
         retang= rend_fonte.get_rect()
         screen.blit(rend_fonte, retang)
+        text_surface = score_font.render(chr(9829) * player.lives, True, RED)
+        text_rect = text_surface.get_rect()
+        text_rect.bottomleft = (10, HEIGHT - 10)
+        screen.blit(text_surface, text_rect)
         
         # Depois de desenhar tudo, inverte o display.
         pygame.display.flip()
