@@ -38,7 +38,7 @@ DIRECTION=0
 class Player(pygame.sprite.Sprite):
     
     # Construtor da classe.
-    def __init__(self):
+    def __init__(self,lives):
         
         # Construtor da classe pai (Sprite).
         pygame.sprite.Sprite.__init__(self)
@@ -67,7 +67,7 @@ class Player(pygame.sprite.Sprite):
         
         # Melhora a colisão estabelecendo um raio de um circulo
         self.radius = 0
-        self.lives= 3
+        self.lives= lives
         self.hit= 0 
         self.hidden= False
     
@@ -220,7 +220,7 @@ class Bullet(pygame.sprite.Sprite):
         if self.rect.bottom < 0:
             self.kill()
      
-def cenario3(screen,direction_t):
+def cenario3(screen,direction_t,lives):
     direction = direction_t
     
 # Inicialização do Pygame.
@@ -251,7 +251,7 @@ def cenario3(screen,direction_t):
     pew_sound = pygame.mixer.Sound(path.join(snd_dir, 'arrowhits.wav'))
     
     # Cria uma nave. O construtor será chamado automaticamente.
-    player = Player()
+    player = Player(lives)
     
     # Cria um grupo de todos os sprites e adiciona a nave.
     all_sprites = pygame.sprite.Group()
@@ -369,7 +369,7 @@ def cenario3(screen,direction_t):
             running = False
             
         elif pontos >= 4000:
-            return CHEFAO
+            return CHEFAO, player.lives
             running=False
     
         # A cada loop, redesenha o fundo e os sprites
@@ -398,5 +398,5 @@ def cenario3(screen,direction_t):
             m = Mob() 
             all_sprites.add(m)
             mobs.add(m)
-    return QUIT
+    return QUIT, player.lives
              

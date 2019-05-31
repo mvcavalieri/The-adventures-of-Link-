@@ -10,7 +10,7 @@ from cenario2 import cenario2
 from cenario3 import cenario3
 from chefao import chefao
 
-# Estabelece a pasta que contem as figuras e sons.
+# Estabelece a pasta que  contem as figuras e sons.
 img_dir = path.join(path.dirname(__file__), 'img')
 snd_dir = path.join(path.dirname(__file__), 'snd')
 fnt_dir = path.join(path.dirname(__file__), 'font')
@@ -40,7 +40,7 @@ DIRECTION=0
 class Player(pygame.sprite.Sprite):
     
     # Construtor da classe.
-    def __init__(self):
+    def __init__(self,lives):
         
         # Construtor da classe pai (Sprite).
         pygame.sprite.Sprite.__init__(self)
@@ -69,7 +69,7 @@ class Player(pygame.sprite.Sprite):
         
         # Melhora a colisão estabelecendo um raio de um circulo
         self.radius = 0
-        self.lives= 3
+        self.lives= lives
         self.hit= 0 
         self.hidden= False
     # Metodo que atualiza a posição da navinha
@@ -225,7 +225,7 @@ class Bullet(pygame.sprite.Sprite):
             
 pontos = 0            
      
-def cenario1(screen,direction_t):
+def cenario1(screen,direction_t,lives):
     direction = direction_t
     
 # Inicialização do Pygame.
@@ -255,7 +255,7 @@ def cenario1(screen,direction_t):
     pew_sound = pygame.mixer.Sound(path.join(snd_dir, 'arrowhits.wav'))
     
     # Cria uma nave. O construtor será chamado automaticamente.
-    player = Player()
+    player = Player(lives)
     
     # Cria um grupo de todos os sprites e adiciona a nave.
     all_sprites = pygame.sprite.Group()
@@ -419,8 +419,8 @@ def cenario1(screen,direction_t):
             mobs.add(m)
             
                            
-    return state
-
+    return state, player.lives
+lives=3
 pygame.init()
 pygame.mixer.init()    
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -429,13 +429,13 @@ try:
     state = INIT
     while state != QUIT:
         if state == INIT:
-            state = cenario1(screen, DIRECTION) 
+            state,lives = cenario1(screen, DIRECTION,lives) 
         if state == LEVEL2:
-            state = cenario2(screen,DIRECTION)
+            state,lives = cenario2(screen,DIRECTION,lives)
         if state == LEVEL3:
-            state = cenario3(screen,DIRECTION)
+            state,lives = cenario3(screen,DIRECTION,lives)
         if state == CHEFAO:
-            state= chefao(screen,DIRECTION)
+            state,lives= chefao(screen,DIRECTION,lives)
         else:
             state = QUIT
 finally:
