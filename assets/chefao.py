@@ -180,7 +180,7 @@ def chefao(screen,direction_t,lives):
     # Tamanho da tela.
     
     
-    pontos = 4000
+    pontos = 3900
     
     
     # Nome do jogo
