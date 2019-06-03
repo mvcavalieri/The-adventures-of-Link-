@@ -363,10 +363,17 @@ def cenario3(screen,direction_t,lives):
         # Verifica se houve colisão entre nave e meteoro
         hits = pygame.sprite.spritecollide(player, mobs, False, pygame.sprite.collide_circle)
         if hits:
+            timer = pygame.time.get_ticks()
+            if timer- player.hit>2000:
+                player.hit= pygame.time.get_ticks()
+                # Toca o som da colisão
+                boom_sound.play()
+                time.sleep(1) # Precisa esperar senão fecha
+                player.lives-=1
             # Toca o som da colisão
-            boom_sound.play()
-            time.sleep(1) # Precisa esperar senão fecha
-            running = False
+                if player.lives<=0:
+                    state = QUIT
+                    running = False
             
         elif pontos >= 4000:
             return CHEFAO, player.lives
