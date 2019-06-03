@@ -113,16 +113,16 @@ class Mob(pygame.sprite.Sprite):
         
         # Melhora a colisão estabelecendo um raio de um circulo
         self.radius = int(self.rect.width * .85 / 2)
-        
-    # Metodo que atualiza a posição da navinha
+          # Metodo que atualiza a posição da navinha
     def update(self):
-        noX = self.rect.x - self.player.rect.x
+        noX = self.rect.x - self.player.rect.x 
         noY = self.rect.y - self.player.rect.y
-        hyp = (noX**2+noY**2)**(0.5)
-        dx = noX/hyp
-        dy = noY/hyp
+        hyp = (noX**2+noY**2)**(1/2)
+        dx= noX / hyp
+        dy= noY / hyp
         self.rect.x -= dx * self.speedx
-        self.rect.x -= dy * self.speedy
+        self.rect.y -= dy * self.speedy
+        
 
 
 # Classe Bullet que representa os tiros
@@ -172,6 +172,7 @@ class Bullet(pygame.sprite.Sprite):
             self.kill()
      
 def chefao(screen,direction_t,lives):
+    conta_vida=0
     direction = direction_t
     
 # Inicialização do Pygame.
@@ -215,7 +216,7 @@ def chefao(screen,direction_t,lives):
     bullets = pygame.sprite.Group()
     
     # Cria 8 meteoros e adiciona no grupo meteoros
-    for i in range(2):
+    for i in range(40):
         m = Mob(player)
         all_sprites.add(m)
         mobs.add(m)
@@ -309,15 +310,22 @@ def chefao(screen,direction_t,lives):
             # O meteoro e destruido e precisa ser recriado
             destroy_sound.play()
             pontos += 100
-            
+            conta_vida+=1
         
         # Verifica se houve colisão entre nave e meteoro
-        hits = pygame.sprite.spritecollide(player, mobs, False, pygame.sprite.collide_circle)
-        if hits:
+        hits_player = pygame.sprite.spritecollide(player, mobs, False, pygame.sprite.collide_circle)
+        if hits_player:
+           timer = pygame.time.get_ticks()
+           if timer- player.hit>2000:
+                player.hit= pygame.time.get_ticks()
+                # Toca o som da colisão
+                boom_sound.play()
+                time.sleep(1) # Precisa esperar senão fecha
+                player.lives-=1
             # Toca o som da colisão
-            boom_sound.play()
-            time.sleep(1) # Precisa esperar senão fecha
-            running = False
+                if player.lives<=0:
+                    state = QUIT
+                    running = False
             
         elif pontos >= 4000:
             return chefao,player.lives
@@ -327,6 +335,9 @@ def chefao(screen,direction_t,lives):
         screen.fill(BLACK)
         screen.blit(background, background_rect)
         all_sprites.draw(screen)
+        
+        pygame.draw.rect(screen, RED, (m.rect.x + 15, m.rect.y - 10, 100, 10))
+        pygame.draw.rect(screen, BLUE, (m.rect.x + 15, m.rect.y - 10, 100 - 4.935 * conta_vida, 10))
         
         rend_fonte= fonte.render('Pontuação: '+ str(pontos), 1, BLACK)
         retang= rend_fonte.get_rect()
@@ -346,4 +357,3 @@ def chefao(screen,direction_t,lives):
         tempo += seconds
 
     return QUIT, player.lives
-             

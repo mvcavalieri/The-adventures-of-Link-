@@ -1,19 +1,15 @@
-# -*- coding: utf-8 -*
 
-# Importando as bibliotecas necessárias.
 import pygame
 import random
 import time
 from os import path
-from config import INIT, QUIT, LEVEL2, LEVEL3, CHEFAO
+from config import INIT, QUIT, LEVEL2, LEVEL3
 from cenario2 import cenario2
 from cenario3 import cenario3
-from chefao import chefao
 
-# Estabelece a pasta que  contem as figuras e sons.
+# Estabelece a pasta que contem as figuras e sons.
 img_dir = path.join(path.dirname(__file__), 'img')
 snd_dir = path.join(path.dirname(__file__), 'snd')
-fnt_dir = path.join(path.dirname(__file__), 'font')
 
 # Dados gerais do jogo.
 WIDTH = 480 # Largura da tela
@@ -69,14 +65,15 @@ class Player(pygame.sprite.Sprite):
         
         # Melhora a colisão estabelecendo um raio de um circulo
         self.radius = 0
-        self.lives= lives
-        self.hit= 0 
-        self.hidden= False
-    # Metodo que atualiza a posição do jogador
+        self.lives=lives
+        self.hit=0
+        self.hidden=True
+        
+    # Metodo que atualiza a posição da navinha
     def update(self):
         self.rect.x += self.speedx
         self.rect.y += self.speedy
-
+        
         # Mantem dentro da tela
         if self.rect.right > WIDTH:
             self.rect.right = WIDTH
@@ -86,7 +83,6 @@ class Player(pygame.sprite.Sprite):
             self.rect.bottom = HEIGHT
         if self.rect.top < 0:
             self.rect.top = 0
-
                     
 # Classe Mob que representa os meteoros
 class Mob(pygame.sprite.Sprite):
@@ -98,10 +94,10 @@ class Mob(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         
         # Carregando a imagem de fundo.
-        mob_img = pygame.image.load(path.join(img_dir, "Goblin.gif")).convert()
+        mob_img = pygame.image.load(path.join(img_dir, "ganon.jpeg")).convert()
         
         # Diminuindo o tamanho da imagem.
-        self.image = pygame.transform.scale(mob_img, (50, 38))
+        self.image = pygame.transform.scale(mob_img, (120, 80))
         
         # Deixando transparente.
         self.image.set_colorkey(BLACK)
@@ -109,72 +105,22 @@ class Mob(pygame.sprite.Sprite):
         # Detalhes sobre o posicionamento.
         self.rect = self.image.get_rect()
         
-        # Sorteia um lugar inicial em x
-        #self.rect.x = random.randrange(WIDTH - self.rect.width)
-        # Sorteia um lugar inicial em y
-        #self.rect.y = random.randrange(-100, -40)
-        rand= random.randint(0,3)
-        
-        if rand == 0:
-            self.rect.x = random.randrange(0, 480)  #altura   
-            self.rect.y = random.randrange(-100, -40)         
-            self.speedx = random.randrange(-2, 2)             
-            self.speedy = random.randrange(2, 9)
-        elif rand == 1:
-            self.rect.x = random.randrange(-100, -40)
-            self.rect.y = random.randrange(0, 600)  #lado
-            self.speedx = random.randrange(2, 9)
-            self.speedy = random.randrange(-3, 3)
-        elif rand == 2:
-            self.rect.x = random.randrange(0, 480)  #altura
-            self.rect.y = random.randrange(650, 700)
-            self.speedx = random.randrange(-3, 3)
-            self.speedy = random.randrange(-9, -2)
-        elif rand == 3:
-            self.rect.x = random.randrange(490, 500)
-            self.rect.y = random.randrange(0, 600)  #lado
-            self.speedx = random.randrange(-9, -2)
-            self.speedy = random.randrange(-3, 3)
-        
-        # Sorteia uma velocidade inicial
-        #self.speedx = random.randrange(1, 3)
-        #self.speedy = random.randrange(1, 7)
-        
+
         # Melhora a colisão estabelecendo um raio de um circulo
         self.radius = int(self.rect.width * .85 / 2)
         
+        
+        
     # Metodo que atualiza a posição da navinha
     def update(self):
-        self.rect.x += self.speedx
-        self.rect.y += self.speedy
+        noX = self.rect.x - self.player.rect.x 
+        noY = self.rect.y - self.player.rect.y
+        hyp = (noX**2+noY**2)**(1/2)
+        dx= noX / hyp
+        dy= noY / hyp
+        self.rect.x -= dx * self.speedx
+        self.rect.y -= dy * self.speedy
         
-        # Se o meteoro passar do final da tela, volta para cima
-        #if self.rect.top > HEIGHT + 10 or self.rect.left < -25 or self.rect.right > WIDTH + 20:
-        
-        """
-        
-        if rand == 0:
-            self.rect.x = random.randrange(0, 480)  #altura   
-            self.rect.y = random.randrange(-100, -40)         
-            self.speedx = random.randrange(-2, 2)             
-            self.speedy = random.randrange(2, 9)
-        elif rand == 1:
-            self.rect.x = random.randrange(-100, -40)
-            self.rect.y = random.randrange(0, 600)  #lado
-            self.speedx = random.randrange(2, 9)
-            self.speedy = random.randrange(-3, 3)
-        elif rand == 2:
-            self.rect.x = random.randrange(0, 480)  #altura
-            self.rect.y = random.randrange(650, 700)
-            self.speedx = random.randrange(-3, 3)
-            self.speedy = random.randrange(-9, -2)
-        elif rand == 3:
-            self.rect.x = random.randrange(490, 500)
-            self.rect.y = random.randrange(0, 600)  #lado
-            self.speedx = random.randrange(-9, -2)
-            self.speedy = random.randrange(-3, 3)
-            
-        """
 
 # Classe Bullet que representa os tiros
         
@@ -223,9 +169,12 @@ class Bullet(pygame.sprite.Sprite):
             self.kill()
             
             
-pontos = 0            
+pontos = 3900 
+ 
      
-def cenario1(screen,direction_t,lives):
+def chefao(screen,direction_t,lives):
+    conta_vida = 0
+    
     direction = direction_t
     
 # Inicialização do Pygame.
@@ -234,8 +183,7 @@ def cenario1(screen,direction_t,lives):
     # Tamanho da tela.
     
     
-    pontos = 0
-    
+    pontos = 3900  
     
     # Nome do jogo
     
@@ -244,11 +192,12 @@ def cenario1(screen,direction_t,lives):
     clock = pygame.time.Clock()
     
     # Carrega o fundo do jogo
-    background = pygame.image.load(path.join(img_dir, 'kokiriii.png')).convert()
+    background = pygame.image.load(path.join(img_dir, 'ganoncenario.png')).convert()
     background_rect = background.get_rect()
     
+    
     # Carrega os sons do jogo
-    pygame.mixer.music.load(path.join(snd_dir, 'kokiri.mp3')) 
+    pygame.mixer.music.load(path.join(snd_dir, 'ganon.mp3')) 
     pygame.mixer.music.set_volume(0.4)
     boom_sound = pygame.mixer.Sound(path.join(snd_dir, 'linkdie.wav'))
     destroy_sound = pygame.mixer.Sound(path.join(snd_dir, 'hit.wav'))
@@ -267,18 +216,15 @@ def cenario1(screen,direction_t,lives):
     # Cria um grupo para tiros
     bullets = pygame.sprite.Group()
     
-    # Cria 8 meteoros e adiciona no grupo meteoros
-    for i in range(2):
+    for i in range(20):
         m = Mob()
         all_sprites.add(m)
         mobs.add(m)
-    
     # Comando para evitar travamentos.
     
     # Loop principal.
     pygame.mixer.music.play(loops=-1)
     running = True
-    score_font= pygame.font.Font(path.join(fnt_dir, "PressStart2P.ttf"), 28)
     while running:
         
         # Ajusta a velocidade do jogo.
@@ -346,7 +292,7 @@ def cenario1(screen,direction_t,lives):
                 if event.key == pygame.K_LEFT:
                     player.speedx = 0
                 if event.key == pygame.K_RIGHT:
-                     player.speedx = 0
+                    player.speedx = 0
                 if event.key == pygame.K_UP:
                     player.speedy = 0
                 if event.key == pygame.K_DOWN:
@@ -362,11 +308,11 @@ def cenario1(screen,direction_t,lives):
             # O meteoro e destruido e precisa ser recriado
             destroy_sound.play()
             pontos += 100
-            
-        
+            conta_vida +=1
+
         # Verifica se houve colisão entre nave e meteoro
-        hits = pygame.sprite.spritecollide(player, mobs, False, pygame.sprite.collide_circle)
-        if hits:
+        hits_player = pygame.sprite.spritecollide(player, mobs, False, pygame.sprite.collide_circle)
+        if hits_player:
             timer = pygame.time.get_ticks()
             if timer- player.hit>2000:
                 player.hit= pygame.time.get_ticks()
@@ -374,21 +320,17 @@ def cenario1(screen,direction_t,lives):
                 boom_sound.play()
                 time.sleep(1) # Precisa esperar senão fecha
                 player.lives-=1
-                
+            # Toca o som da colisão
                 if player.lives<=0:
                     state = QUIT
                     running = False
             
-        if pontos >= 1000:
-            state = LEVEL2
+        if pontos >= 2100:
+            state = LEVEL2,player.lives
             running = False
             
         elif pontos >= 3000:
-            state= LEVEL3
-            running=False
-            
-        elif pontos>=4000:
-            state= CHEFAO
+            state= LEVEL3, player.lives
             running=False
     
         # A cada loop, redesenha o fundo e os sprites
@@ -400,10 +342,18 @@ def cenario1(screen,direction_t,lives):
         retang= rend_fonte.get_rect()
         screen.blit(rend_fonte, retang)
         
+        pygame.draw.rect(screen, RED, (m.rect.x + 15, m.rect.y - 10, 100, 10))
+        pygame.draw.rect(screen, BLUE, (m.rect.x + 15, m.rect.y - 10, 100 - 4.935 * conta_vida, 10))
+       
+        rend_fonte= fonte.render('Pontuação: '+ str(pontos), 1, BLACK)
+        retang= rend_fonte.get_rect()
+        screen.blit(rend_fonte, retang)
         text_surface = score_font.render(chr(9829) * player.lives, True, RED)
         text_rect = text_surface.get_rect()
         text_rect.bottomleft = (10, HEIGHT - 10)
         screen.blit(text_surface, text_rect)
+        
+        
         # Depois de desenhar tudo, inverte o display.
         pygame.display.flip()
         
@@ -416,27 +366,6 @@ def cenario1(screen,direction_t,lives):
         if tempo % 17 == 0:
             m = Mob() 
             all_sprites.add(m)
-            mobs.add(m)  
-            
+            mobs.add(m)
                            
-    return state, player.lives
-lives=3
-pygame.init()
-pygame.mixer.init()    
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("The adventures of Link")   
-try:
-    state = INIT
-    while state != QUIT:
-        if state == INIT:
-            state,lives = cenario1(screen, DIRECTION,lives) 
-        if state == LEVEL2:
-            state,lives = cenario2(screen,DIRECTION,lives)
-        if state == LEVEL3:
-            state,lives = cenario3(screen,DIRECTION,lives)
-        if state == CHEFAO:
-            state,lives= chefao(screen,DIRECTION,lives)
-        else:
-            state = QUIT
-finally:
-    pygame.quit()
+    return QUIT,player.lives
