@@ -72,7 +72,7 @@ class Player(pygame.sprite.Sprite):
         self.lives= lives
         self.hit= 0 
         self.hidden= False
-    # Metodo que atualiza a posição da navinha
+    # Metodo que atualiza a posição do jogador
     def update(self):
         self.rect.x += self.speedx
         self.rect.y += self.speedy
@@ -346,7 +346,7 @@ def cenario1(screen,direction_t,lives):
                 if event.key == pygame.K_LEFT:
                     player.speedx = 0
                 if event.key == pygame.K_RIGHT:
-                    player.speedx = 0
+                     player.speedx = 0
                 if event.key == pygame.K_UP:
                     player.speedy = 0
                 if event.key == pygame.K_DOWN:
@@ -425,18 +425,18 @@ pygame.init()
 pygame.mixer.init()    
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("The adventures of Link")   
-try:
-    state = INIT
-    while state != QUIT:
-        if state == INIT:
-            state,lives = cenario1(screen, DIRECTION,lives) 
-        if state == LEVEL2:
-            state,lives = cenario2(screen,DIRECTION,lives)
-        if state == LEVEL3:
-            state,lives = cenario3(screen,DIRECTION,lives)
-        if state == CHEFAO:
-            state,lives= chefao(screen,DIRECTION,lives)
-        else:
-            state = QUIT
-finally:
-    pygame.quit()
+
+state = INIT
+while state != QUIT:
+    if state == INIT:
+        state,lives = cenario1(screen, DIRECTION,lives) 
+    if state == LEVEL2:
+        state,lives = cenario2(screen,DIRECTION,lives)
+    if state == LEVEL3:
+        state,lives = cenario3(screen,DIRECTION,lives)
+    if state == CHEFAO:
+        state,lives= chefao(screen,DIRECTION,lives)
+    else:
+        state = QUIT
+
+pygame.quit()
