@@ -86,8 +86,8 @@ class Mob(pygame.sprite.Sprite):
     # Construtor da classe.
     def __init__(self, player, screen):
         
-        self.speedx = 2
-        self.speedy = 2
+        self.speedx = 5
+        self.speedy = 5
         self.player = player
         
         # Construtor da classe pai (Sprite).
@@ -191,7 +191,6 @@ def comvida(screen,direction_t):
     
     # Variável para o ajuste de velocidade
     clock = pygame.time.Clock()
-    
     # Carrega o fundo do jogo
     background = pygame.image.load(path.join(img_dir, 'ganoncenario.png')).convert()
     background= pygame.transform.scale(background, (480, 600))
@@ -315,7 +314,8 @@ def comvida(screen,direction_t):
             conta_vida +=1
             if conta_vida==20:
                 victory_sound.play()
-                state=QUIT
+                time.sleep(1)
+                running=False
         
 
 

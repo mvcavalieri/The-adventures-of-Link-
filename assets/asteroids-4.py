@@ -284,7 +284,6 @@ def cenario1(screen,direction_t,lives):
         
         # Ajusta a velocidade do jogo.
         clock.tick(FPS)
-        
         # Processa os eventos (mouse, teclado, botão, etc).
         for event in pygame.event.get():
             
