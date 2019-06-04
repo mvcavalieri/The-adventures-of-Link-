@@ -308,7 +308,11 @@ def comvida(screen,direction_t,lives):
             conta_vida +=1
             if conta_vida==20:
                 victory_sound.play()
-                time.sleep(1)
+                rend_fonte= fonte.render("Você ganhou!! UHULL", 1, BLUE)
+                retang= rend_fonte.get_rect()
+                retang.center=(WIDTH/2, HEIGHT/2)
+                screen.blit(rend_fonte, retang)
+                time.sleep(3)
                 running=False
         
 

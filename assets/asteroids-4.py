@@ -21,6 +21,11 @@ WIDTH = 480 # Largura da tela
 HEIGHT = 600 # Altura da tela
 FPS = 60 # Frames por segundo
 
+pygame.init()
+pygame.mixer.init()    
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("The adventures of Link") 
+
 # Define algumas variáveis com as cores básicas
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -224,7 +229,54 @@ class Bullet(pygame.sprite.Sprite):
             self.kill()
             
             
-pontos = 0            
+pontos = 0   
+def INTRO():
+    intro = True
+    clock = pygame.time.Clock()
+    fonte_titulo = pygame.font.SysFont('comicsans', 40, True)
+    fonte_resto = pygame.font.SysFont('comicsans', 20, True)
+    
+    
+    while intro:
+        
+        for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+    
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_c:
+                        intro= False
+        
+        
+        screen.fill(BLACK)
+        rend_fonte= fonte_titulo.render('As aventuras do Link!', 1, GREEN)
+        retang= rend_fonte.get_rect()
+        retang.midtop = (WIDTH/2, 50)
+        screen.blit(rend_fonte, retang)
+
+        rend_fonte= fonte_resto.render('O jogo tem 3 nivei e um chefão', 1, WHITE)
+        retang= rend_fonte.get_rect()
+        retang.center = (WIDTH/2, HEIGHT/2)
+        screen.blit(rend_fonte, retang)
+        
+        rend_fonte= fonte_resto.render('Mate os inimigos para passar de nivel', 1, WHITE)
+        retang= rend_fonte.get_rect()
+        retang.center = (WIDTH/2, HEIGHT/2 + 50)
+        screen.blit(rend_fonte, retang)
+        
+        rend_fonte= fonte_resto.render('Pressione c para iniciar', 1, WHITE)
+        retang= rend_fonte.get_rect()
+        retang.center = (WIDTH/2, HEIGHT/2 + 100)
+        screen.blit(rend_fonte, retang)
+
+        rend_fonte= fonte_resto.render('Por Maria Victoria e Eduardo Gonçalves', 1, WHITE)
+        retang= rend_fonte.get_rect()
+        retang.bottomleft = (10, HEIGHT - 10)
+        screen.blit(rend_fonte, retang)
+        
+        pygame.display.update()
+        clock.tick(15)
+         
      
 def cenario1(screen,direction_t,lives):
     direction = direction_t
@@ -421,10 +473,7 @@ def cenario1(screen,direction_t,lives):
                            
     return state, player.lives
 lives=3
-pygame.init()
-pygame.mixer.init()    
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("The adventures of Link")   
+INTRO()
 try:
     state = INIT
     while state != QUIT:
