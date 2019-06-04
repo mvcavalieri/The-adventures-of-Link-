@@ -9,6 +9,7 @@ from cenario3 import cenario3
 # Estabelece a pasta que contem as figuras e sons.
 img_dir = path.join(path.dirname(__file__), 'img')
 snd_dir = path.join(path.dirname(__file__), 'snd')
+fnt_dir = path.join(path.dirname(__file__), 'font')
 
 # Dados gerais do jogo.
 WIDTH = 480 # Largura da tela
@@ -35,7 +36,7 @@ DIRECTION=0
 class Player(pygame.sprite.Sprite):
     
     # Construtor da classe.
-    def __init__(self):
+    def __init__(self,lives):
         
         # Construtor da classe pai (Sprite).
         pygame.sprite.Sprite.__init__(self)
@@ -64,7 +65,8 @@ class Player(pygame.sprite.Sprite):
         
         # Melhora a colisão estabelecendo um raio de um circulo
         self.radius = 0
-    
+        self.lives=lives
+        self.hit=0
     # Metodo que atualiza a posição da navinha
     def update(self):
         self.rect.x += self.speedx
@@ -86,8 +88,8 @@ class Mob(pygame.sprite.Sprite):
     # Construtor da classe.
     def __init__(self, player, screen):
         
-        self.speedx = 5
-        self.speedy = 5
+        self.speedx = 4
+        self.speedy = 4
         self.player = player
         
         # Construtor da classe pai (Sprite).
@@ -172,23 +174,15 @@ class Bullet(pygame.sprite.Sprite):
 pontos = 0    
  
      
-def comvida(screen,direction_t):
+def comvida(screen,direction_t,lives):
     conta_vida = 0
     
     direction = direction_t
     
 # Inicialização do Pygame.
-    fonte = pygame.font.SysFont('comicsans', 40, True)
+    fonte = pygame.font.SysFont('comicsans', 40, True)    
     
-    # Tamanho da tela.
-    
-    
-    pontos = 0
-    
-    
-    # Nome do jogo
-    
-    
+    pontos = 0 
     # Variável para o ajuste de velocidade
     clock = pygame.time.Clock()
     # Carrega o fundo do jogo
@@ -196,7 +190,7 @@ def comvida(screen,direction_t):
     background= pygame.transform.scale(background, (480, 600))
     background_rect = background.get_rect()
     
-    
+    score_font= pygame.font.Font(path.join(fnt_dir, "PressStart2P.ttf"), 28)
     # Carrega os sons do jogo
     pygame.mixer.music.load(path.join(snd_dir, 'ganon.mp3')) 
     pygame.mixer.music.set_volume(0.4)
@@ -205,7 +199,7 @@ def comvida(screen,direction_t):
     pew_sound = pygame.mixer.Sound(path.join(snd_dir, 'arrowhits.wav'))
     victory_sound = pygame.mixer.Sound(path.join(snd_dir, 'victory.wav'))
     # Cria uma nave. O construtor será chamado automaticamente.
-    player = Player()
+    player = Player(lives)
     
     # Cria um grupo de todos os sprites e adiciona a nave.
     all_sprites = pygame.sprite.Group()
@@ -320,13 +314,20 @@ def comvida(screen,direction_t):
 
 
         # Verifica se houve colisão entre nave e meteoro
-        hits_player = pygame.sprite.spritecollide(player, mobs, False, pygame.sprite.collide_circle)
-        if hits_player:
+        hits = pygame.sprite.spritecollide(player, mobs, False, pygame.sprite.collide_circle)
+        if hits:
+            timer = pygame.time.get_ticks()
+            if timer- player.hit>2000:
+                player.hit= pygame.time.get_ticks()
+                # Toca o som da colisão
+                boom_sound.play()
+                time.sleep(1) # Precisa esperar senão fecha
+                player.lives-=1
             # Toca o som da colisão
-            boom_sound.play()
-            time.sleep(1) # Precisa esperar senão fecha
-            state = QUIT
-            running = False
+                if player.lives<=0:
+                    state = QUIT
+                    running = False
+            # Toca o som da colisão
             
         if pontos >= 2100:
             state = LEVEL2
@@ -347,7 +348,10 @@ def comvida(screen,direction_t):
         
         pygame.draw.rect(screen, RED, (m.rect.x + 15, m.rect.y - 10, 100, 10))
         pygame.draw.rect(screen, BLUE, (m.rect.x + 15, m.rect.y - 10, 100 - 4.935 * conta_vida, 10))
-       
+        text_surface = score_font.render(chr(9829) * player.lives, True, RED)
+        text_rect = text_surface.get_rect()
+        text_rect.bottomleft = (10, HEIGHT - 10)
+        screen.blit(text_surface, text_rect)
         
         
         # Depois de desenhar tudo, inverte o display.
@@ -360,6 +364,6 @@ def comvida(screen,direction_t):
         tempo += seconds
 
                            
-    return state
+    return state,player.lives
 
   

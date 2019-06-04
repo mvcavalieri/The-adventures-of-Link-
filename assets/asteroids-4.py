@@ -435,7 +435,7 @@ try:
         if state == LEVEL3:
             state,lives = cenario3(screen,DIRECTION,lives)
         if state == CHEFAO:
-            state,lives= comvida(screen,DIRECTION)
+            state,lives= comvida(screen,DIRECTION,lives)
         else:
             state = QUIT
 finally:
