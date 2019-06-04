@@ -109,7 +109,7 @@ class Mob(pygame.sprite.Sprite):
         
 
         # Melhora a colisão estabelecendo um raio de um circulo
-        self.radius = int(self.rect.width * .85 / 2)
+        self.radius = int(self.rect.width * 0.5)
         
         
         

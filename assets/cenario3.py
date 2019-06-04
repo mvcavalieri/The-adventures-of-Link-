@@ -401,7 +401,7 @@ def cenario3(screen,direction_t,lives):
         seconds= milli*1000
         tempo += seconds
         
-        if tempo % 17 == 0:
+        if tempo % 7 == 0:
             m = Mob() 
             all_sprites.add(m)
             mobs.add(m)
