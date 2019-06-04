@@ -248,8 +248,12 @@ def INTRO():
                         intro= False
         
         
-        screen.fill(BLACK)
-        rend_fonte= fonte_titulo.render('As aventuras do Link!', 1, GREEN)
+        background = pygame.image.load(path.join(img_dir, 'background.jpg')).convert()
+        background= pygame.transform.scale(background, (480, 600))
+        background_rect = background.get_rect()
+        screen.blit(background, background_rect)
+
+        rend_fonte= fonte_titulo.render('As aventuras do Link!', 1, BLACK)
         retang= rend_fonte.get_rect()
         retang.midtop = (WIDTH/2, 50)
         screen.blit(rend_fonte, retang)
