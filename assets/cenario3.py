@@ -229,7 +229,7 @@ def cenario3(screen,direction_t,lives):
     # Tamanho da tela.
     
     
-    pontos = 3000
+    pontos = 2500
     
     
     # Nome do jogo

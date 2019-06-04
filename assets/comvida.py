@@ -1,4 +1,3 @@
-
 import pygame
 import random
 import time
@@ -36,7 +35,7 @@ DIRECTION=0
 class Player(pygame.sprite.Sprite):
     
     # Construtor da classe.
-    def __init__(self,lives):
+    def __init__(self):
         
         # Construtor da classe pai (Sprite).
         pygame.sprite.Sprite.__init__(self)
@@ -65,10 +64,7 @@ class Player(pygame.sprite.Sprite):
         
         # Melhora a colisão estabelecendo um raio de um circulo
         self.radius = 0
-        self.lives=lives
-        self.hit=0
-        self.hidden=True
-        
+    
     # Metodo que atualiza a posição da navinha
     def update(self):
         self.rect.x += self.speedx
@@ -88,7 +84,11 @@ class Player(pygame.sprite.Sprite):
 class Mob(pygame.sprite.Sprite):
     
     # Construtor da classe.
-    def __init__(self):
+    def __init__(self, player, screen):
+        
+        self.speedx = 2
+        self.speedy = 2
+        self.player = player
         
         # Construtor da classe pai (Sprite).
         pygame.sprite.Sprite.__init__(self)
@@ -100,7 +100,7 @@ class Mob(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(mob_img, (120, 80))
         
         # Deixando transparente.
-        self.image.set_colorkey(BLACK)
+        self.image.set_colorkey(WHITE)
         
         # Detalhes sobre o posicionamento.
         self.rect = self.image.get_rect()
@@ -169,10 +169,10 @@ class Bullet(pygame.sprite.Sprite):
             self.kill()
             
             
-pontos = 3900 
+pontos = 0    
  
      
-def chefao(screen,direction_t,lives):
+def comvida(screen,direction_t):
     conta_vida = 0
     
     direction = direction_t
@@ -183,7 +183,8 @@ def chefao(screen,direction_t,lives):
     # Tamanho da tela.
     
     
-    pontos = 3900  
+    pontos = 0
+    
     
     # Nome do jogo
     
@@ -193,6 +194,7 @@ def chefao(screen,direction_t,lives):
     
     # Carrega o fundo do jogo
     background = pygame.image.load(path.join(img_dir, 'ganoncenario.png')).convert()
+    background= pygame.transform.scale(background, (480, 600))
     background_rect = background.get_rect()
     
     
@@ -202,9 +204,9 @@ def chefao(screen,direction_t,lives):
     boom_sound = pygame.mixer.Sound(path.join(snd_dir, 'linkdie.wav'))
     destroy_sound = pygame.mixer.Sound(path.join(snd_dir, 'hit.wav'))
     pew_sound = pygame.mixer.Sound(path.join(snd_dir, 'arrowhits.wav'))
-    
+    victory_sound = pygame.mixer.Sound(path.join(snd_dir, 'victory.wav'))
     # Cria uma nave. O construtor será chamado automaticamente.
-    player = Player(lives)
+    player = Player()
     
     # Cria um grupo de todos os sprites e adiciona a nave.
     all_sprites = pygame.sprite.Group()
@@ -216,10 +218,12 @@ def chefao(screen,direction_t,lives):
     # Cria um grupo para tiros
     bullets = pygame.sprite.Group()
     
+    # Cria 8 meteoros e adiciona no grupo meteoros
     for i in range(20):
-        m = Mob()
+        m = Mob(player, screen)
         all_sprites.add(m)
         mobs.add(m)
+    
     # Comando para evitar travamentos.
     
     # Loop principal.
@@ -309,28 +313,27 @@ def chefao(screen,direction_t,lives):
             destroy_sound.play()
             pontos += 100
             conta_vida +=1
+            if conta_vida==20:
+                victory_sound.play()
+                state=QUIT
+        
+
 
         # Verifica se houve colisão entre nave e meteoro
         hits_player = pygame.sprite.spritecollide(player, mobs, False, pygame.sprite.collide_circle)
         if hits_player:
-            timer = pygame.time.get_ticks()
-            if timer- player.hit>2000:
-                player.hit= pygame.time.get_ticks()
-                # Toca o som da colisão
-                boom_sound.play()
-                time.sleep(1) # Precisa esperar senão fecha
-                player.lives-=1
             # Toca o som da colisão
-                if player.lives<=0:
-                    state = QUIT
-                    running = False
+            boom_sound.play()
+            time.sleep(1) # Precisa esperar senão fecha
+            state = QUIT
+            running = False
             
         if pontos >= 2100:
-            state = LEVEL2,player.lives
+            state = LEVEL2
             running = False
             
         elif pontos >= 3000:
-            state= LEVEL3, player.lives
+            state= LEVEL3
             running=False
     
         # A cada loop, redesenha o fundo e os sprites
@@ -345,13 +348,6 @@ def chefao(screen,direction_t,lives):
         pygame.draw.rect(screen, RED, (m.rect.x + 15, m.rect.y - 10, 100, 10))
         pygame.draw.rect(screen, BLUE, (m.rect.x + 15, m.rect.y - 10, 100 - 4.935 * conta_vida, 10))
        
-        rend_fonte= fonte.render('Pontuação: '+ str(pontos), 1, BLACK)
-        retang= rend_fonte.get_rect()
-        screen.blit(rend_fonte, retang)
-        text_surface = score_font.render(chr(9829) * player.lives, True, RED)
-        text_rect = text_surface.get_rect()
-        text_rect.bottomleft = (10, HEIGHT - 10)
-        screen.blit(text_surface, text_rect)
         
         
         # Depois de desenhar tudo, inverte o display.
@@ -362,10 +358,8 @@ def chefao(screen,direction_t,lives):
         milli = clock.tick()
         seconds= milli*1000
         tempo += seconds
-        
-        if tempo % 17 == 0:
-            m = Mob() 
-            all_sprites.add(m)
-            mobs.add(m)
+
                            
-    return QUIT,player.lives
+    return state
+
+  

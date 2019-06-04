@@ -9,6 +9,7 @@ from config import INIT, QUIT, LEVEL2, LEVEL3, CHEFAO
 from cenario2 import cenario2
 from cenario3 import cenario3
 from chefao import chefao
+from comvida import comvida
 
 # Estabelece a pasta que  contem as figuras e sons.
 img_dir = path.join(path.dirname(__file__), 'img')
@@ -277,7 +278,7 @@ def cenario1(screen,direction_t,lives):
     
     # Loop principal.
     pygame.mixer.music.play(loops=-1)
-    running = True
+    running = True  
     score_font= pygame.font.Font(path.join(fnt_dir, "PressStart2P.ttf"), 28)
     while running:
         
@@ -383,7 +384,7 @@ def cenario1(screen,direction_t,lives):
             state = LEVEL2
             running = False
             
-        elif pontos >= 3000:
+        elif pontos >= 2500:
             state= LEVEL3
             running=False
             
@@ -435,7 +436,7 @@ try:
         if state == LEVEL3:
             state,lives = cenario3(screen,DIRECTION,lives)
         if state == CHEFAO:
-            state,lives= chefao(screen,DIRECTION,lives)
+            state,lives= comvida(screen,DIRECTION)
         else:
             state = QUIT
 finally:

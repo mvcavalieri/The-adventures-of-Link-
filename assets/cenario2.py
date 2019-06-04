@@ -372,7 +372,7 @@ def cenario2(screen,direction_t,lives):
                     state = QUIT
                     running = False
             
-        elif pontos >= 3000:
+        elif pontos >= 2500:
             return LEVEL3, player.lives
             running=False
             
